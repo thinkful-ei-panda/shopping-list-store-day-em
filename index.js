@@ -1,11 +1,14 @@
+'use strict';
+
 const store = {
   items: [
-    { id: cuid(), name: 'apples', checked: false },
-    { id: cuid(), name: 'oranges', checked: false },
-    { id: cuid(), name: 'milk', checked: true },
-    { id: cuid(), name: 'bread', checked: false }
+    { id: cuid(), name: 'apples', checked: false, edit: false },
+    { id: cuid(), name: 'oranges', checked: false, edit: false },
+    { id: cuid(), name: 'milk', checked: true, edit: false },
+    { id: cuid(), name: 'bread', checked: false, edit: false }
   ],
-  hideCheckedItems: false
+  hideCheckedItems: false,
+  editItem: false
 };
 
 const generateItemElement = function (item) {
@@ -22,6 +25,9 @@ const generateItemElement = function (item) {
       <div class='shopping-item-controls'>
         <button class='shopping-item-toggle js-item-toggle'>
           <span class='button-label'>check</span>
+        </button>
+        <button class='shopping-item-edit js-item-edit'>
+          <span class='button-label'>edit</span>
         </button>
         <button class='shopping-item-delete js-item-delete'>
           <span class='button-label'>delete</span>
@@ -65,6 +71,42 @@ const render = function () {
 const addItemToShoppingList = function (itemName) {
   store.items.push({ id: cuid(), name: itemName, checked: false });
 };
+
+
+const generateEditFormHTML = function () {
+  return `<div class='edit-item'>
+      <input type='text' placeholder='update item'
+      class='list-item-update'></input>
+      <button type='submit' class='update-button'></button>
+    </div>`;
+};
+
+
+// function to handle clicking edit button using event delegation
+const handleEditItem = function () {
+  $('.js-shopping-list').on('click', '.js-item-edit', event => {
+    // Get the index of the item in store.items
+    generateEditFormHTML();
+    
+    // edit item function ?
+    editListItem();
+    // what to put in data array store?
+
+
+    // Render the updated shopping list.
+    render();
+  });
+};
+
+const editListItem = function () {
+  // get index of the item in store
+  const id = getItemIdFromElement(event.currentTarget);
+  $('.list-item-update').val();
+
+};
+
+
+
 
 const handleNewItemSubmit = function () {
   $('#js-shopping-list-form').submit(function (event) {
