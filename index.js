@@ -2,20 +2,21 @@
 
 const store = {
   items: [
-    { id: cuid(), name: 'apples', checked: false, edit: false },
-    { id: cuid(), name: 'oranges', checked: false, edit: false },
-    { id: cuid(), name: 'milk', checked: true, edit: false },
-    { id: cuid(), name: 'bread', checked: false, edit: false }
+    { id: cuid(), name: 'apples', checked: false },
+    { id: cuid(), name: 'oranges', checked: false },
+    { id: cuid(), name: 'milk', checked: true },
+    { id: cuid(), name: 'bread', checked: false }
   ],
   hideCheckedItems: false,
-  editItem: false
 };
 
 const generateItemElement = function (item) {
   let itemTitle = `<span class='shopping-item shopping-item__checked'>${item.name}</span>`;
   if (!item.checked) {
     itemTitle = `
-     <span class='shopping-item'>${item.name}</span>
+    <form class="js-edit-item">
+      <input class="shopping-item" type="text" value="${item.name}" />
+    </form>
     `;
   }
 
@@ -25,9 +26,6 @@ const generateItemElement = function (item) {
       <div class='shopping-item-controls'>
         <button class='shopping-item-toggle js-item-toggle'>
           <span class='button-label'>check</span>
-        </button>
-        <button class='shopping-item-edit js-item-edit'>
-          <span class='button-label'>edit</span>
         </button>
         <button class='shopping-item-delete js-item-delete'>
           <span class='button-label'>delete</span>
@@ -73,36 +71,28 @@ const addItemToShoppingList = function (itemName) {
 };
 
 
-const generateEditFormHTML = function () {
-  return `<div class='edit-item'>
-      <input type='text' placeholder='update item'
-      class='list-item-update'></input>
-      <button type='submit' class='update-button'></button>
-    </div>`;
-};
-
-
 // function to handle clicking edit button using event delegation
-const handleEditItem = function () {
-  $('.js-shopping-list').on('click', '.js-item-edit', event => {
-    // Get the index of the item in store.items
-    generateEditFormHTML();
-    
-    // edit item function ?
-    editListItem();
-    // what to put in data array store?
-
-
-    // Render the updated shopping list.
+const handleEditShoppingItem = function () {
+  // on submit on edit item
+  $('.js-shopping-list').on('submit', '.js-edit-item', event => {
+    // prevent default submit action
+    event.preventDefault();
+    // get the id from current target
+    const id = getItemIdFromElement(event.currentTarget);
+    // get item name from find method value
+    const itemName = $(event.currentTarget).find('.shopping-item').val();
+    // run editListItem function with arguments id and name
+    editListItemName(id, itemName);
+    // render function to update shopping list
     render();
   });
 };
 
-const editListItem = function () {
+// function to get list item
+const editListItemName = function (id, itemName) {
   // get index of the item in store
-  const id = getItemIdFromElement(event.currentTarget);
-  $('.list-item-update').val();
-
+  const item = store.items.find(item => item.id === id);
+  item.name = itemName;
 };
 
 
@@ -202,6 +192,7 @@ const handleShoppingList = function () {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleToggleFilterClick();
+  handleEditShoppingItem
 };
 
 // when the page loads, call `handleShoppingList`
